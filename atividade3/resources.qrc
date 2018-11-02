@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/shaders">
+        <file>fshader.glsl</file>
+        <file>vshader.glsl</file>
+		<file>faixa1.mp4</file>
+    </qresource>
+</RCC>

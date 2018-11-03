@@ -1,16 +1,4 @@
 #include "openglwidgetativ3.h"
-#include <QMediaPlayer>
-#include <QFileDialog>
-
-void OpenGLWidget :: musica()
-{
-
-    media = new QMediaPlayer(this);
-    media->setMedia(QUrl::fromLocalFile("qrc:/shaders/faixa1.mp4"));
-    media->setVolume(30);
-    media->play();
-
-}
 
 OpenGLWidget::OpenGLWidget(QWidget *parent) : QOpenGLWidget(parent)
 {
@@ -44,7 +32,6 @@ void OpenGLWidget::initializeGL()
     timer.start(0);
 
     time.start();
-    //musica();
 }
 
 void OpenGLWidget::resizeGL(int width, int height)
@@ -70,7 +57,7 @@ void OpenGLWidget::paintGL()
 
     // Target
     glUniform4f(locTranslation, targetPosY, 0.5, 0, 0);
-    glUniform1f(locScaling, 0.11);
+    glUniform1f(locScaling, 0.12);
     glDrawElements(GL_TRIANGLES, 2 * 3, GL_UNSIGNED_INT, 0);
 
     // Target2
@@ -305,8 +292,8 @@ void OpenGLWidget::animate()
         if (targetPosY > 0.8f)
         {
             targetPosY = 0.8f;
-            targetPosY1 = 1.0f;
-            targetPosY2 = 0.6f;
+            targetPosY1 = 0.6f;
+            targetPosY2 = 1.0f;
             targetPosYOffset = -targetPosYOffset;
         }
     }
@@ -315,8 +302,8 @@ void OpenGLWidget::animate()
         if (targetPosY < -0.8f)
         {
             targetPosY = -0.8f;
-            targetPosY1 = -0.6f;
-            targetPosY2 = -1.0f;
+            targetPosY1 = -1.0f;
+            targetPosY2 = -0.6f;
             targetPosYOffset = -targetPosYOffset;
         }
     }
@@ -328,39 +315,29 @@ void OpenGLWidget::animate()
         projectilePosX += 3.0f * elapsedTime;
 
         // Check whether the projectile hit the target
-        if (projectilePosX > 0.5f)
+        if(projectilePosX > 0.9f)
+            {
+                if (std::fabs(projectilePosY - targetPosY1) < 0.125f || std::fabs(projectilePosY - targetPosY2) < 0.125f)
+                {
+                    numHits++;
+                    qDebug("Hit!");
+                    emit updateHitsLabel(QString("Pontos: %1").arg(numHits));
+                    shooting = false;
+                    reconstruindoCores();
+                }
+
+            }
+        else if (projectilePosX > 0.5f)
         {
             if (std::fabs(projectilePosY - targetPosY) < 0.125f)
             {
-                numHits++;
+                numHits = numHits -1;
                 qDebug("Hit!");
                 emit updateHitsLabel(QString("Pontos: %1").arg(numHits));
                 shooting = false;
                 reconstruindoCores();
             }
         }
-        else if(projectilePosX > 0.9f)
-            {
-                if (std::fabs(projectilePosY - targetPosY1) < 0.125f)
-                {
-                    numHits++;
-                    qDebug("Hit!");
-                    emit updateHitsLabel(QString("Pontos: %1").arg(numHits));
-                    shooting = false;
-                    reconstruindoCores();
-                }
-            }
-         else if(projectilePosX > 0.9f)
-            {
-                if (std::fabs(projectilePosY - targetPosY2) < 0.125f)
-                {
-                    numHits++;
-                    qDebug("Hit!");
-                    emit updateHitsLabel(QString("Pontos: %1").arg(numHits));
-                    shooting = false;
-                    reconstruindoCores();
-                }
-            }
     }
     // Check whether the projectile missed the target
     if (projectilePosX > 1.0f)

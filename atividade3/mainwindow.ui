@@ -49,7 +49,7 @@
     <item row="3" column="2">
      <widget class="QLabel" name="label">
       <property name="text">
-       <string>Aperte as setas para se mover.E use o espaço para atirar.Aperte F1 para reconstruir as formas (mudar cor)</string>
+       <string>Aperte as setas para se mover.E use o espaço para atirar.Aperte F1 para reconstruir as formas (mudar cor). Esc para sair. O maior alvo da -1 pontos, e os pequenos dão +1 pontos. Ao acertar os alvos eles mudam de cor.</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>

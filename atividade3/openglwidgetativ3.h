@@ -6,13 +6,9 @@
 #include <QOpenGLExtraFunctions>
 #include <memory>
 
-class QMediaPlayer;
-
 class OpenGLWidget : public QOpenGLWidget, protected QOpenGLExtraFunctions
 {
     Q_OBJECT
-
-    QMediaPlayer *media = nullptr;
 
     GLuint vboVertices = 0;
     GLuint vboColors = 0;
@@ -42,7 +38,6 @@ class OpenGLWidget : public QOpenGLWidget, protected QOpenGLExtraFunctions
     QTime time;
 
 public:    
-    void musica();
 
     explicit OpenGLWidget (QWidget *parent = nullptr);
 

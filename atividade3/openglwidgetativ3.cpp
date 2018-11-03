@@ -19,6 +19,8 @@ OpenGLWidget::OpenGLWidget(QWidget *parent) : QOpenGLWidget(parent)
 
     targetPosYOffset = 2.0f;
     targetPosY = 0;
+    targetPosY1 = -0.2;
+    targetPosY2 = +0.2;
 
     shooting = false;
     projectilePosX = 0;
@@ -42,7 +44,7 @@ void OpenGLWidget::initializeGL()
     timer.start(0);
 
     time.start();
-    musica();
+    //musica();
 }
 
 void OpenGLWidget::resizeGL(int width, int height)
@@ -63,12 +65,22 @@ void OpenGLWidget::paintGL()
 
     // Player
     glUniform4f(locTranslation, playerPosY,-0.8, 0, 0);
-    glUniform1f(locScaling, 0.2);
+    glUniform1f(locScaling, 0.15);
     glDrawElements(GL_TRIANGLES, 2 * 3, GL_UNSIGNED_INT, 0);
 
     // Target
-    glUniform4f(locTranslation, targetPosY,0.8, 0, 0);
-    glUniform1f(locScaling, 0.2);
+    glUniform4f(locTranslation, targetPosY, 0.5, 0, 0);
+    glUniform1f(locScaling, 0.11);
+    glDrawElements(GL_TRIANGLES, 2 * 3, GL_UNSIGNED_INT, 0);
+
+    // Target2
+    glUniform4f(locTranslation, targetPosY1, 0.9, 0, 0);
+    glUniform1f(locScaling, 0.08);
+    glDrawElements(GL_TRIANGLES, 2 * 3, GL_UNSIGNED_INT, 0);
+
+    // Target2
+    glUniform4f(locTranslation, targetPosY2, 0.9, 0, 0);
+    glUniform1f(locScaling, 0.08);
     glDrawElements(GL_TRIANGLES, 2 * 3, GL_UNSIGNED_INT, 0);
 
     // Projectile
@@ -243,6 +255,14 @@ void OpenGLWidget::createShaders()
     fs.close();
 }
 
+void OpenGLWidget::reconstruindoCores()
+{
+    destroyShaders();
+    destroyVBOs();
+    createShaders();
+    createVBOs();
+}
+
 void OpenGLWidget::destroyVBOs()
 {
     glDeleteBuffers(1, &vboVertices);
@@ -277,12 +297,16 @@ void OpenGLWidget::animate()
 
     // Update target
     targetPosY += targetPosYOffset * elapsedTime;
+    targetPosY1 += targetPosYOffset * elapsedTime;
+    targetPosY2 += targetPosYOffset * elapsedTime;
 
     if (targetPosYOffset > 0)
     {
         if (targetPosY > 0.8f)
         {
             targetPosY = 0.8f;
+            targetPosY1 = 1.0f;
+            targetPosY2 = 0.6f;
             targetPosYOffset = -targetPosYOffset;
         }
     }
@@ -291,6 +315,8 @@ void OpenGLWidget::animate()
         if (targetPosY < -0.8f)
         {
             targetPosY = -0.8f;
+            targetPosY1 = -0.6f;
+            targetPosY2 = -1.0f;
             targetPosYOffset = -targetPosYOffset;
         }
     }
@@ -302,7 +328,7 @@ void OpenGLWidget::animate()
         projectilePosX += 3.0f * elapsedTime;
 
         // Check whether the projectile hit the target
-        if (projectilePosX > 0.8f)
+        if (projectilePosX > 0.5f)
         {
             if (std::fabs(projectilePosY - targetPosY) < 0.125f)
             {
@@ -310,17 +336,38 @@ void OpenGLWidget::animate()
                 qDebug("Hit!");
                 emit updateHitsLabel(QString("Pontos: %1").arg(numHits));
                 shooting = false;
+                reconstruindoCores();
             }
         }
-
-        // Check whether the projectile missed the target
-        if (projectilePosX > 1.0f)
-        {
-            qDebug("Missed");
-            shooting = false;
-        }
+        else if(projectilePosX > 0.9f)
+            {
+                if (std::fabs(projectilePosY - targetPosY1) < 0.125f)
+                {
+                    numHits++;
+                    qDebug("Hit!");
+                    emit updateHitsLabel(QString("Pontos: %1").arg(numHits));
+                    shooting = false;
+                    reconstruindoCores();
+                }
+            }
+         else if(projectilePosX > 0.9f)
+            {
+                if (std::fabs(projectilePosY - targetPosY2) < 0.125f)
+                {
+                    numHits++;
+                    qDebug("Hit!");
+                    emit updateHitsLabel(QString("Pontos: %1").arg(numHits));
+                    shooting = false;
+                    reconstruindoCores();
+                }
+            }
     }
-
+    // Check whether the projectile missed the target
+    if (projectilePosX > 1.0f)
+    {
+        qDebug("Missed");
+        shooting = false;
+    }
     update();
 }
 
@@ -351,10 +398,7 @@ void OpenGLWidget::keyPressEvent(QKeyEvent *event)
 
     if (event->key() == Qt::Key_F1)
     {
-        destroyShaders();
-        destroyVBOs();
-        createShaders();
-        createVBOs();
+        reconstruindoCores();
     }
 }
 

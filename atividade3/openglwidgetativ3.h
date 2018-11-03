@@ -31,7 +31,8 @@ class OpenGLWidget : public QOpenGLWidget, protected QOpenGLExtraFunctions
 
     float targetPosYOffset; // Target displacement along Y axis
     float targetPosY; // Current target Y position
-
+    float targetPosY1;
+    float targetPosY2;
     bool shooting; // Whether the projectile is being animated
     float projectilePosX; // Projectile X position
     float projectilePosY; // Projectile Y position
@@ -49,6 +50,7 @@ public:
     void createShaders();
     void destroyVBOs();
     void destroyShaders();
+    void reconstruindoCores();
 
 protected:
     void initializeGL();

@@ -62,19 +62,19 @@ void OpenGLWidget::paintGL()
     glBindVertexArray(vao);
 
     // Player
-    glUniform4f(locTranslation, -0.8, playerPosY, 0, 0);
+    glUniform4f(locTranslation, playerPosY,-0.8, 0, 0);
     glUniform1f(locScaling, 0.2);
     glDrawElements(GL_TRIANGLES, 2 * 3, GL_UNSIGNED_INT, 0);
 
     // Target
-    glUniform4f(locTranslation, 0.8, targetPosY, 0, 0);
+    glUniform4f(locTranslation, targetPosY,0.8, 0, 0);
     glUniform1f(locScaling, 0.2);
     glDrawElements(GL_TRIANGLES, 2 * 3, GL_UNSIGNED_INT, 0);
 
     // Projectile
     if (shooting)
     {
-        glUniform4f(locTranslation, projectilePosX, projectilePosY, 0, 0);
+        glUniform4f(locTranslation, projectilePosY, projectilePosX, 0, 0);
         glUniform1f(locScaling, 0.05);
         glDrawElements(GL_TRIANGLES, 2 * 3, GL_UNSIGNED_INT, 0);
     }
@@ -326,12 +326,12 @@ void OpenGLWidget::animate()
 
 void OpenGLWidget::keyPressEvent(QKeyEvent *event)
 {
-    if (event->key() == Qt::Key_Up ||
-        event->key() == Qt::Key_W)
+    if (event->key() == Qt::Key_Right ||
+        event->key() == Qt::Key_D)
         playerPosYOffset = 2.0f;
 
-    if (event->key() == Qt::Key_Down ||
-        event->key() == Qt::Key_S)
+    if (event->key() == Qt::Key_Left ||
+        event->key() == Qt::Key_A)
         playerPosYOffset = -2.0f;
 
     if (event->key() == Qt::Key_Space)
@@ -360,11 +360,11 @@ void OpenGLWidget::keyPressEvent(QKeyEvent *event)
 
 void OpenGLWidget::keyReleaseEvent(QKeyEvent *event)
 {
-    if (event->key() == Qt::Key_Up ||
-        event->key() == Qt::Key_W)
+    if (event->key() == Qt::Key_Right ||
+        event->key() == Qt::Key_D)
         playerPosYOffset = 0;
 
-    if (event->key() == Qt::Key_Down ||
-        event->key() == Qt::Key_S)
+    if (event->key() == Qt::Key_Left ||
+        event->key() == Qt::Key_A)
         playerPosYOffset = 0;
 }

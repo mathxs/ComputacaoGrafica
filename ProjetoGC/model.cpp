@@ -232,13 +232,15 @@ void Model::createShaders ()
     }
 }
 
-void Model::drawModel()
+void Model::drawModel(float posX, float posY, float posZ, float sX, float sY, float sZ)
 {
     modelMatrix.setToIdentity();
     modelMatrix.translate(0, 0, zoom);
     modelMatrix.rotate(trackBall.getRotation());
     modelMatrix.scale(invDiag, invDiag, invDiag);
     modelMatrix.translate(-midPoint);
+    modelMatrix.scale(sX, sY, sZ);
+    modelMatrix.translate(posX, posY, posZ);
 
     GLuint locModel = 0;
     GLuint locNormalMatrix = 0;
@@ -248,6 +250,7 @@ void Model::drawModel()
     locShininess = glGetUniformLocation(shaderProgram[shaderIndex], "shininess");
 
     glBindVertexArray(vao);
+    //glUseProgram(shaderProgram[shaderIndex]);
 
     glUniformMatrix4fv(locModel, 1, GL_FALSE, modelMatrix.data());
     glUniformMatrix3fv(locNormalMatrix, 1, GL_FALSE, modelMatrix.normalMatrix().data());

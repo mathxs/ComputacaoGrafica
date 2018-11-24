@@ -59,7 +59,7 @@ public:
     void loadTextureLayer(const QImage &image);
     void loadCubeMapTexture();
 
-    void drawModel();
+    void drawModel(float posX, float posY, float posZ, float sX, float sY, float sZ);
 
     QMatrix4x4 modelMatrix;
     QVector3D midPoint;

@@ -50,7 +50,6 @@ protected:
     void paintGL();
     void efeitosVisuais(std::shared_ptr<Model> &m);
 
-    std::shared_ptr<Model> model;
     Light light;
     Camera camera;
 

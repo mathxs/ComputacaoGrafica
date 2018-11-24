@@ -2,8 +2,6 @@
 
 OpenGLWidget::OpenGLWidget(QWidget * parent) : QOpenGLWidget(parent)
 {
-
-
     tempFileModel = tempDir.path();
     if (tempDir.isValid()) {
       tempFileModel = tempDir.path();
@@ -14,19 +12,25 @@ OpenGLWidget::OpenGLWidget(QWidget * parent) : QOpenGLWidget(parent)
 
 void OpenGLWidget::changeShader(int shaderIndex)
 {
-    if (!model)
-        return;
-
-    model->shaderIndex = shaderIndex;
+    if (tiro)
+        atirador->shaderIndex = shaderIndex;
+        tiro->shaderIndex = shaderIndex;
+        alvo1->shaderIndex = shaderIndex;
+        alvo2->shaderIndex = shaderIndex;
+        alvo3->shaderIndex = shaderIndex;
     update();
 }
 
 void OpenGLWidget::wheelEvent(QWheelEvent *event)
 {
-   if(!model)
+   if(!atirador)
        return;
 
-   model->zoom += 0.001 * event->delta();
+   atirador->zoom += 0.001 * event->delta();
+   tiro->zoom += 0.001 * event->delta();
+   alvo1->zoom += 0.001 * event->delta();
+   alvo2->zoom += 0.001 * event->delta();
+   alvo3->zoom += 0.001 * event->delta();
 }
 
 void OpenGLWidget::initializeGL()
@@ -50,9 +54,18 @@ void OpenGLWidget::paintGL()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     efeitosVisuais(atirador);
-    efeitosVisuais()
+    efeitosVisuais(tiro);
+    efeitosVisuais(alvo1);
+    efeitosVisuais(alvo2);
+    efeitosVisuais(alvo3);
 
-    model->drawModel();
+    atirador->drawModel(1, 1, 0, 0.2,0.2,0.2);
+    tiro->drawModel(2, 2, 0, 0.2,0.2,0.2);
+    alvo1->drawModel(3, 3, 0, 0.2,0.2,0.2);
+    alvo2->drawModel(4, 4, 0, 0.2,0.2,0.2);
+    alvo3->drawModel(5, 5, 0, 0.2,0.2,0.2);
+
+
 }
 
 void OpenGLWidget:: efeitosVisuais(std::shared_ptr<Model> &m)
@@ -85,9 +98,12 @@ void OpenGLWidget::resizeGL(int width, int height)
 {
     camera.resizeViewport(width, height);
 
-    if (model)
-        model->trackBall.resizeViewport(width, height);
-
+    if (tiro)
+        atirador->trackBall.resizeViewport(width, height);
+        tiro->trackBall.resizeViewport(width, height);
+        alvo1->trackBall.resizeViewport(width, height);
+        alvo2->trackBall.resizeViewport(width, height);
+        alvo3->trackBall.resizeViewport(width, height);
     update();
 }
 
@@ -99,26 +115,30 @@ void OpenGLWidget::showFileOpenDialog(){
 
     atirador = std::make_shared<Model>(this);
     atirador->shaderIndex = shaderIndex;
-    atirador->readOFFFile(tempFileModel + "star.off");
-
-    model->trackBall.resizeViewport(width(), height());
+    //atirador->readOFFFile(tempFileModel + "star.off");
+    atirador->readOFFFile("C:/Users/Matheus/Documents/ArqDesen/RespositorioGit/ComputacaoGrafica/ProjetoGC/3d/star.off");
 
     tiro = std::make_shared<Model>(this);
     tiro->shaderIndex = shaderIndex;
-    tiro->readOFFFile(tempFileModel + "star.off");
+    //tiro->readOFFFile(tempFileModel + "star.off");
+    tiro->readOFFFile("C:/Users/Matheus/Documents/ArqDesen/RespositorioGit/ComputacaoGrafica/ProjetoGC/3d/star.off");
 
     alvo1 = std::make_shared<Model>(this);
     alvo1->shaderIndex = shaderIndex;
-    alvo1->readOFFFile(tempFileModel + "cubo.off");
+    //alvo1->readOFFFile(tempFileModel + "cubo.off");
+    alvo1->readOFFFile("C:/Users/Matheus/Documents/ArqDesen/RespositorioGit/ComputacaoGrafica/ProjetoGC/3d/cubo.off");
 
     alvo2 = std::make_shared<Model>(this);
     alvo2->shaderIndex = shaderIndex;
-    alvo2->readOFFFile(tempFileModel + "cubo.off");
+    //alvo2->readOFFFile(tempFileModel + "cubo.off");
+    alvo2->readOFFFile("C:/Users/Matheus/Documents/ArqDesen/RespositorioGit/ComputacaoGrafica/ProjetoGC/3d/cubo.off");
 
     alvo3 = std::make_shared<Model>(this);
     alvo3->shaderIndex = shaderIndex;
-    alvo3->readOFFFile(tempFileModel + "cubo.off");
+    //alvo3->readOFFFile(tempFileModel + "cubo.off");
+    alvo3->readOFFFile("C:/Users/Matheus/Documents/ArqDesen/RespositorioGit/ComputacaoGrafica/ProjetoGC/3d/cubo.off");
 
+    atirador->trackBall.resizeViewport(width(), height());
     update();
 }
 
@@ -129,28 +149,40 @@ void OpenGLWidget::animate()
 
 void OpenGLWidget::mouseMoveEvent(QMouseEvent *event)
 {
-    if (!model)
+    if (!atirador)
         return;
 
-    model->trackBall.mouseMove(event->localPos());
+    atirador->trackBall.mouseMove(event->localPos());
+    tiro->trackBall.mouseMove(event->localPos());
+    alvo1->trackBall.mouseMove(event->localPos());
+    alvo2->trackBall.mouseMove(event->localPos());
+    alvo3->trackBall.mouseMove(event->localPos());
 }
 
 void OpenGLWidget::mousePressEvent(QMouseEvent *event)
 {
-    if (!model)
+    if (!atirador)
         return;
 
     if (event->button() & Qt::LeftButton)
-        model->trackBall.mousePress(event->localPos());
+        atirador->trackBall.mousePress(event->localPos());
+        tiro->trackBall.mousePress(event->localPos());
+        alvo1->trackBall.mousePress(event->localPos());
+        alvo2->trackBall.mousePress(event->localPos());
+        alvo3->trackBall.mousePress(event->localPos());
 }
 
 void OpenGLWidget::mouseReleaseEvent(QMouseEvent *event)
 {
-    if (!model)
+    if (!atirador)
         return;
 
     if (event->button() & Qt::LeftButton)
-        model->trackBall.mouseRelease(event->localPos());
+        atirador->trackBall.mouseRelease(event->localPos());
+        tiro->trackBall.mouseRelease(event->localPos());
+        alvo1->trackBall.mouseRelease(event->localPos());
+        alvo2->trackBall.mouseRelease(event->localPos());
+        alvo3->trackBall.mouseRelease(event->localPos());
 }
 
 // Strong focus is required

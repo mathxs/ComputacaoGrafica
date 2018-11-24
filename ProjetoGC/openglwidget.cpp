@@ -8,6 +8,20 @@ OpenGLWidget::OpenGLWidget(QWidget * parent) : QOpenGLWidget(parent)
       QFile::copy(":3d/3d/star.off", tempFileModel + "star.off");
       QFile::copy(":3d/3d/cubo.off", tempFileModel + "cubo.off");
     }
+
+    playerPosYOffset = 0;
+    playerPosY = 0;
+
+    targetPosYOffset = 2.0f;
+    targetPosY = 0;
+    targetPosY1 = -0.2;
+    targetPosY2 = +0.2;
+
+    shooting = false;
+    projectilePosX = 0;
+    projectilePosY = 0;
+
+    numHits = 0;
 }
 
 void OpenGLWidget::changeShader(int shaderIndex)
@@ -59,11 +73,15 @@ void OpenGLWidget::paintGL()
     efeitosVisuais(alvo2);
     efeitosVisuais(alvo3);
 
-    atirador->drawModel(1, 1, 0, 0.2,0.2,0.2);
-    tiro->drawModel(2, 2, 0, 0.2,0.2,0.2);
-    alvo1->drawModel(3, 3, 0, 0.2,0.2,0.2);
-    alvo2->drawModel(4, 4, 0, 0.2,0.2,0.2);
-    alvo3->drawModel(5, 5, 0, 0.2,0.2,0.2);
+    atirador->drawModel(playerPosY, 0.0f, 0.0f, 0.5f,0.5f,0.5f);
+    alvo3->drawModel(targetPosY, 1.0f, 0.0f, 0.4f,0.4f,0.4f);
+    alvo1->drawModel(targetPosY1, 0.0f, 0.0f, 0.3f,0.3f,0.3f);
+    alvo2->drawModel(targetPosY2, -1.0f, 0.0f, 0.3f,0.3f,0.3f);
+    if (shooting)
+    {
+        tiro->drawModel(projectilePosY, projectilePosY, 0.0f, 0.1f,0.1f,0.1f);
+    }
+
 
 
 }
@@ -144,7 +162,78 @@ void OpenGLWidget::showFileOpenDialog(){
 
 void OpenGLWidget::animate()
 {
+    float elapsedTime = time.restart() / 1000.0f;
+
+    // Change player Y position
+    playerPosY += playerPosYOffset * elapsedTime;
+
+    // Check player bounds
+    if (playerPosY < -0.8f)
+        playerPosY = -0.8f;
+    if (playerPosY > 0.8f)
+        playerPosY = 0.8f;
+
+    // Update target
+    targetPosY += targetPosYOffset * elapsedTime;
+    targetPosY1 += targetPosYOffset * elapsedTime;
+    targetPosY2 += targetPosYOffset * elapsedTime;
+
+    if (targetPosYOffset > 0)
+    {
+        if (targetPosY > 0.8f)
+        {
+            targetPosY = 0.8f;
+            targetPosY1 = 0.6f;
+            targetPosY2 = 1.0f;
+            targetPosYOffset = -targetPosYOffset;
+        }
+    }
+    else if (targetPosYOffset < 0)
+    {
+        if (targetPosY < -0.8f)
+        {
+            targetPosY = -0.8f;
+            targetPosY1 = -1.0f;
+            targetPosY2 = -0.6f;
+            targetPosYOffset = -targetPosYOffset;
+        }
+    }
+
+    // Update projectile
+    if (shooting)
+    {
+        // Move projectile
+        projectilePosX += 3.0f * elapsedTime;
+
+        // Check whether the projectile hit the target
+        if(projectilePosX > 0.9f)
+            {
+                if (std::fabs(projectilePosY - targetPosY1) < 0.125f || std::fabs(projectilePosY - targetPosY2) < 0.125f)
+                {
+                    numHits++;
+                    qDebug("Hit!");
+                    shooting = false;
+                }
+
+            }
+        else if (projectilePosX > 0.5f)
+        {
+            if (std::fabs(projectilePosY - targetPosY) < 0.125f)
+            {
+                numHits = numHits -1;
+                qDebug("Hit!");
+                shooting = false;
+            }
+        }
+    }
+    // Check whether the projectile missed the target
+    if (projectilePosX > 1.0f)
+    {
+        qDebug("Missed");
+        shooting = false;
+    }
     update();
+
 }
 
 void OpenGLWidget::mouseMoveEvent(QMouseEvent *event)
@@ -185,9 +274,26 @@ void OpenGLWidget::mouseReleaseEvent(QMouseEvent *event)
         alvo3->trackBall.mouseRelease(event->localPos());
 }
 
-// Strong focus is required
 void OpenGLWidget::keyPressEvent(QKeyEvent *event)
 {
+    if (event->key() == Qt::Key_Right ||
+        event->key() == Qt::Key_D)
+        playerPosYOffset = 2.0f;
+
+    if (event->key() == Qt::Key_Left ||
+        event->key() == Qt::Key_A)
+        playerPosYOffset = -2.0f;
+
+    if (event->key() == Qt::Key_Space)
+    {
+        if (!shooting)
+        {
+            shooting = true;
+            projectilePosX = -0.7f;
+            projectilePosY = playerPosY;
+        }
+    }
+
     if (event->key() == Qt::Key_Escape)
     {
         QApplication::quit();

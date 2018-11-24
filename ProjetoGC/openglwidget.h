@@ -23,6 +23,18 @@ class OpenGLWidget : public QOpenGLWidget, protected QOpenGLExtraFunctions
     std::shared_ptr<Model> alvo2;
     std::shared_ptr<Model> alvo3;
 
+    float playerPosYOffset; // Player displacement along Y axis
+    float playerPosY; // Current player Y position
+
+    float targetPosYOffset; // Target displacement along Y axis
+    float targetPosY; // Current target Y position
+    float targetPosY1;
+    float targetPosY2;
+    bool shooting; // Whether the projectile is being animated
+    float projectilePosX; // Projectile X position
+    float projectilePosY; // Projectile Y position
+    int numHits; // Number of hits
+
 public:
     OpenGLWidget(QWidget *parent = nullptr);
 
@@ -33,6 +45,7 @@ public:
     void wheelEvent(QWheelEvent *event);
 
     QTimer timer;
+    QTime time;
 
 signals:
     void statusBarMessage(QString);

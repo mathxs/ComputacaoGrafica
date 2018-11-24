@@ -21,4 +21,8 @@
         <file>shaders/ftoon.glsl</file>
         <file>shaders/vtoon.glsl</file>
     </qresource>
+    <qresource prefix="/3d">
+        <file>3d/cubo.off</file>
+        <file>3d/star.off</file>
+    </qresource>
 </RCC>

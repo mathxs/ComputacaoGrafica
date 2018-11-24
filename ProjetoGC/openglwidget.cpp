@@ -2,6 +2,14 @@
 
 OpenGLWidget::OpenGLWidget(QWidget * parent) : QOpenGLWidget(parent)
 {
+
+
+    tempFileModel = tempDir.path();
+    if (tempDir.isValid()) {
+      tempFileModel = tempDir.path();
+      QFile::copy(":3d/3d/star.off", tempFileModel + "star.off");
+      QFile::copy(":3d/3d/cubo.off", tempFileModel + "cubo.off");
+    }
 }
 
 void OpenGLWidget::changeShader(int shaderIndex)
@@ -32,6 +40,8 @@ void OpenGLWidget::initializeGL()
 
     connect(&timer, SIGNAL(timeout()), this, SLOT(animate()));
     timer.start(0);
+
+    showFileOpenDialog();
 }
 
 void OpenGLWidget::paintGL()
@@ -39,22 +49,26 @@ void OpenGLWidget::paintGL()
     glViewport(0, 0, width(), height());
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    if (!model)
-        return;
+    efeitosVisuais(atirador);
+    efeitosVisuais()
 
-    GLuint shaderProgramID = model->shaderProgram[model->shaderIndex];
+    model->drawModel();
+}
 
-    QVector4D ambientProduct = light.ambient * model->material.ambient;
-    QVector4D diffuseProduct = light.diffuse * model->material.diffuse;
-    QVector4D specularProduct = light.specular * model->material.specular;
+void OpenGLWidget:: efeitosVisuais(std::shared_ptr<Model> &m)
+{
+    int shaderProgramID = m->shaderProgram[m->shaderIndex];
+    QVector4D ambientProduct = light.ambient * m->material.ambient;
+    QVector4D diffuseProduct = light.diffuse * m->material.diffuse;
+    QVector4D specularProduct = light.specular * m->material.specular;
 
-    GLint locProjection = glGetUniformLocation(shaderProgramID, "projection");
-    GLint locView = glGetUniformLocation(shaderProgramID, "view");
-    GLint locLightPosition = glGetUniformLocation(shaderProgramID, "lightPosition");
-    GLint locAmbientProduct = glGetUniformLocation(shaderProgramID, "ambientProduct");
-    GLint locDiffuseProduct = glGetUniformLocation(shaderProgramID, "diffuseProduct");
-    GLint locSpecularProduct = glGetUniformLocation(shaderProgramID, "specularProduct");
-    GLint locShininess = glGetUniformLocation(shaderProgramID, "shininess");
+    GLuint locProjection = glGetUniformLocation(shaderProgramID, "projection");
+    GLuint locView = glGetUniformLocation(shaderProgramID, "view");
+    GLuint locLightPosition = glGetUniformLocation(shaderProgramID, "lightPosition");
+    GLuint locAmbientProduct = glGetUniformLocation(shaderProgramID, "ambientProduct");
+    GLuint locDiffuseProduct = glGetUniformLocation(shaderProgramID, "diffuseProduct");
+    GLuint locSpecularProduct = glGetUniformLocation(shaderProgramID, "specularProduct");
+    GLuint locShininess = glGetUniformLocation(shaderProgramID, "shininess");
 
     glUseProgram(shaderProgramID);
 
@@ -64,9 +78,7 @@ void OpenGLWidget::paintGL()
     glUniform4fv(locAmbientProduct, 1, &(ambientProduct[0]));
     glUniform4fv(locDiffuseProduct, 1, &(diffuseProduct[0]));
     glUniform4fv(locSpecularProduct, 1, &(specularProduct[0]));
-    glUniform1f(locShininess, model->material.shininess);
-
-    model->drawModel();
+    glUniform1f(locShininess, m->material.shininess);
 }
 
 void OpenGLWidget::resizeGL(int width, int height)
@@ -79,28 +91,34 @@ void OpenGLWidget::resizeGL(int width, int height)
     update();
 }
 
-void OpenGLWidget::showFileOpenDialog()
-{
-    QByteArray fileFormat = "off";
-    QString fileName = QFileDialog::getOpenFileName(this,
-        "Open File", QDir::homePath(),
-        QString("\%1 Files (*.\%2)").arg(QString(fileFormat.toUpper())).arg(QString(fileFormat)), nullptr
-#ifdef Q_OS_LINUX
-        , QFileDialog::DontUseNativeDialog
-#endif
-    );
+void OpenGLWidget::showFileOpenDialog(){
+
     int shaderIndex = 0;
-    if (!fileName.isEmpty())
-    {
-        if (model)
-            shaderIndex = model->shaderIndex;
+    if(atirador)
+        shaderIndex = atirador->shaderIndex;
 
-        model = std::make_shared<Model>(this);
-        model->shaderIndex = shaderIndex;
-        model->readOFFFile(fileName);
+    atirador = std::make_shared<Model>(this);
+    atirador->shaderIndex = shaderIndex;
+    atirador->readOFFFile(tempFileModel + "star.off");
 
-        model->trackBall.resizeViewport(width(), height());
-    }
+    model->trackBall.resizeViewport(width(), height());
+
+    tiro = std::make_shared<Model>(this);
+    tiro->shaderIndex = shaderIndex;
+    tiro->readOFFFile(tempFileModel + "star.off");
+
+    alvo1 = std::make_shared<Model>(this);
+    alvo1->shaderIndex = shaderIndex;
+    alvo1->readOFFFile(tempFileModel + "cubo.off");
+
+    alvo2 = std::make_shared<Model>(this);
+    alvo2->shaderIndex = shaderIndex;
+    alvo2->readOFFFile(tempFileModel + "cubo.off");
+
+    alvo3 = std::make_shared<Model>(this);
+    alvo3->shaderIndex = shaderIndex;
+    alvo3->readOFFFile(tempFileModel + "cubo.off");
+
     update();
 }
 

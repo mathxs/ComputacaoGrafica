@@ -7,8 +7,6 @@ Model::Model(QOpenGLWidget *_glWidget)
 
     initializeOpenGLFunctions();
 
-    loadCubeMapTexture();
-
     shaderIndex = 0;
     numShaders = 0;
 }
@@ -80,7 +78,6 @@ void Model::createVBOs()
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, numFaces * 3 * sizeof(unsigned int), indices.get(), GL_STATIC_DRAW);
     indices.reset();
 }
-
 
 void Model::destroyShaders ()
 {
@@ -445,90 +442,4 @@ void Model::createTangents()
         float hand = QVector3D::dotProduct(b, bitangents[i]);
         tangents[i].setW((hand < 0.0f) ? -1.0f : 1.0f);
     }
-}
-
-void Model::loadTexture(const QImage &image)
-{
-    if (textureID)
-    {
-        glDeleteTextures(1, &textureID);
-    }
-
-    glGenTextures(1, &textureID);
-    glBindTexture(GL_TEXTURE_2D, textureID);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image.width(), image.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, image.bits());
-
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    glGenerateMipmap(GL_TEXTURE_2D);
-}
-
-void Model::loadTextureLayer(const QImage &image)
-{   
-    if (textureLayerID)
-    {
-        glDeleteTextures(1, &textureLayerID);
-    }
-
-    glGenTextures(1, &textureLayerID);
-    glBindTexture(GL_TEXTURE_2D, textureLayerID);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image.width(), image.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, image.bits());
-
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    glGenerateMipmap(GL_TEXTURE_2D);
-}
-
-void Model::loadCubeMapTexture()
-{
-    /*
-    QString folderName = "Some folder containing the cube maps";
-    QImage negx = QImage(QString(folderName).append("/negx.jpg")).convertToFormat(QImage::Format_RGBA8888 );
-    QImage negy = QImage(QString(folderName).append("/negy.jpg")).convertToFormat(QImage::Format_RGBA8888 );
-    QImage negz = QImage(QString(folderName).append("/negz.jpg")).convertToFormat(QImage::Format_RGBA8888 );
-    QImage posx = QImage(QString(folderName).append("/posx.jpg")).convertToFormat(QImage::Format_RGBA8888 );
-    QImage posy = QImage(QString(folderName).append("/posy.jpg")).convertToFormat(QImage::Format_RGBA8888 );
-    QImage posz = QImage(QString(folderName).append("/posz.jpg")).convertToFormat(QImage::Format_RGBA8888 );
-    */
-
-    QImage negx = QImage(QString(":/textures/cube/negx.jpg")).convertToFormat(QImage::Format_RGBA8888 );
-    QImage negy = QImage(QString(":/textures/cube/negy.jpg")).convertToFormat(QImage::Format_RGBA8888 );
-    QImage negz = QImage(QString(":/textures/cube/negz.jpg")).convertToFormat(QImage::Format_RGBA8888 );
-    QImage posx = QImage(QString(":/textures/cube/posx.jpg")).convertToFormat(QImage::Format_RGBA8888 );
-    QImage posy = QImage(QString(":/textures/cube/posy.jpg")).convertToFormat(QImage::Format_RGBA8888 );
-    QImage posz = QImage(QString(":/textures/cube/posz.jpg")).convertToFormat(QImage::Format_RGBA8888 );
-
-
-    negx = negx.convertToFormat(QImage::Format_RGBA8888);
-    negy = negy.convertToFormat(QImage::Format_RGBA8888);
-    negz = negz.convertToFormat(QImage::Format_RGBA8888);
-    posx = posx.convertToFormat(QImage::Format_RGBA8888);
-    posy = posy.convertToFormat(QImage::Format_RGBA8888);
-    posz = posz.convertToFormat(QImage::Format_RGBA8888);
-
-    if (textureCubeMapID)
-    {
-        glDeleteTextures(1, &textureCubeMapID);
-    }
-
-    glGenTextures(1, &textureCubeMapID);
-    glBindTexture(GL_TEXTURE_CUBE_MAP, textureCubeMapID);
-
-    glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_X, 0, GL_RGBA, negx.width(), negx.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, negx.bits());
-    glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, GL_RGBA, negy.width(), negy.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, negy.bits());
-    glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, GL_RGBA, negz.width(), negz.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, negz.bits());
-    glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, GL_RGBA, posx.width(), posx.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, posx.bits());
-    glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Y, 0, GL_RGBA, posy.width(), posy.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, posy.bits());
-    glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Z, 0, GL_RGBA, posz.width(), posz.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, posz.bits());
-
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
 }

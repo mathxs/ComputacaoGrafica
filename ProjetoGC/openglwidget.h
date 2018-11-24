@@ -14,6 +14,15 @@ class OpenGLWidget : public QOpenGLWidget, protected QOpenGLExtraFunctions
 {
     Q_OBJECT
 
+    QString tempFileModel;
+    QTemporaryDir tempDir;
+
+    std::shared_ptr<Model> atirador;
+    std::shared_ptr<Model> tiro;
+    std::shared_ptr<Model> alvo1;
+    std::shared_ptr<Model> alvo2;
+    std::shared_ptr<Model> alvo3;
+
 public:
     OpenGLWidget(QWidget *parent = nullptr);
 
@@ -39,6 +48,7 @@ protected:
     void initializeGL();
     void resizeGL(int width, int height);
     void paintGL();
+    void efeitosVisuais(std::shared_ptr<Model> &m);
 
     std::shared_ptr<Model> model;
     Light light;

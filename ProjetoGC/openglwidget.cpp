@@ -26,6 +26,7 @@ OpenGLWidget::OpenGLWidget(QWidget * parent) : QOpenGLWidget(parent)
     acertoAlvo2 = false;
     acertoAlvo3 = false;
     emit fim(false);
+    contador = 0;
 
 }
 
@@ -89,6 +90,14 @@ void OpenGLWidget::paintGL()
 
     if(acertoAlvo1 and acertoAlvo2 and acertoAlvo3){
         emit fim(true);
+        qDebug("FIM");
+        contador += 1;
+        if(contador > 10){
+            Sleep(1000);
+            qApp->exit(0);
+        }
+    }else{
+        emit fim(false);
     }
 
     //efeitosVisuais(pontoReferencia);

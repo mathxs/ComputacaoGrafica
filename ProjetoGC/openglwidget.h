@@ -39,6 +39,8 @@ class OpenGLWidget : public QOpenGLWidget, protected QOpenGLExtraFunctions
     float targetPosY1;
     float targetPosY2;
 
+    int contador;
+
 public:
     OpenGLWidget(QWidget *parent = nullptr);
 

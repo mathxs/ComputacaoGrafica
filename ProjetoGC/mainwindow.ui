@@ -161,12 +161,16 @@
      </font>
     </property>
     <property name="text">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#0000ff;&quot;&gt;FIM DO JOGO. APERTE ESC.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#0000ff;&quot;&gt;FIM DO JOGO. &lt;br&gt;A janela vai fechar.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="alignment">
      <set>Qt::AlignCenter</set>
     </property>
    </widget>
+   <zorder>bkgndColorCheckBox</zorder>
+   <zorder>shaderWidget</zorder>
+   <zorder>openGLWidget</zorder>
+   <zorder>fimJogo</zorder>
   </widget>
   <action name="actionE_xit">
    <property name="text">

@@ -74,7 +74,7 @@ void OpenGLWidget::paintGL()
     alvo3->drawModel(targetPosY, 12.0f, 0.0f, 0.4f,0.4f,0.4f);
     alvo1->drawModel(targetPosY1, 10.0f, 0.0f, 0.3f,0.3f,0.3f);
     alvo2->drawModel(targetPosY2, 12.0f, 0.0f, 0.3f,0.3f,0.3f);
-    pontoReferencia->drawModel(0.0f, 0.0f, 0.0f, 0.5f,0.5f,0.5f);
+    pontoReferencia->drawModel(10.0f, 10.0f, 0.0f, 100.0f,100.0f,1.0f);
 
 }
 

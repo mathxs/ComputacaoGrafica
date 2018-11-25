@@ -79,8 +79,8 @@ void OpenGLWidget::paintGL()
     }
 
     if(!acertoAlvo1){
-        efeitosVisuais(alvo1);
         alvo1->drawModel(targetPosY1, 10.0f, 0.0f, 0.3f,0.3f,0.3f);
+        efeitosVisuais(alvo1);
     }
 
     if(!acertoAlvo2){
@@ -213,20 +213,25 @@ void OpenGLWidget::animate()
             targetPosYOffset = -targetPosYOffset;
         }
     }
+    qDebug("t1:%f t2:%f t3:%f X:%f Y:%f Z:%f",targetPosY1,targetPosY,targetPosY2,playerPosY,playerPosX,playerPosZ);
 
-
-    if((abs(targetPosY1 -  playerPosY)<1.0f) and (abs(10.0f -  playerPosX)<1.0f) and (abs(0.0f -  playerPosZ)<1.0f))
+    if((abs(abs(targetPosY1) -  playerPosY)<2.0f) and (abs(playerPosX)<3.0f) and (abs(playerPosX)>0.0f) and (abs(playerPosZ)<7.4f) and (abs(playerPosZ)>6.5f))
      {
-            acertoAlvo1 = true;
-           //numHits++;
-           qDebug("Hit!");
+           acertoAlvo1 = true;
+           qDebug("Hit alvo1!");
      }
-    /*if((abs(targetPosY1 -  playerPosY)<1.0f || abs(targetPosY2 -  playerPosY)<1.0f || abs(targetPosY -  playerPosY)<1.0f) and (abs(10.0f -  playerPosX)<1.0f || abs(12.0f -  playerPosX)<1.0f || abs(12.0f -  playerPosX)<1.0f) and (abs(0.0f -  playerPosZ)<1.0f || abs(0.0f -  playerPosY)<1.0f || abs(0.0f -  playerPosZ)<1.0f))
-     {
-           //numHits++;
-           qDebug("Hit!");
-     }*/
 
+    if((abs(abs(targetPosY2) -  playerPosY)<2.0f) and (abs(playerPosX)<5.0f) and (abs(playerPosX)>2.0f) and (abs(playerPosZ)<7.4f) and (abs(playerPosZ)>6.5f))
+     {
+           acertoAlvo2 = true;
+           qDebug("Hit alvo2!");
+     }
+
+    if((abs(abs(targetPosY) -  playerPosY)<2.0f) and (abs(playerPosX)<5.0f) and (abs(playerPosX)>2.0f) and (abs(playerPosZ)<7.4f) and (abs(playerPosZ)>6.5f))
+     {
+           acertoAlvo3 = true;
+           qDebug("Hit! alvo3");
+     }
     update();
 
 }
@@ -293,6 +298,11 @@ void OpenGLWidget::keyPressEvent(QKeyEvent *event)
         acertoAlvo1 = true;
         acertoAlvo2 = true;
         acertoAlvo3 = true;
+    }
+
+    if (event->key() == Qt::Key_P)
+    {
+        Sleep(10000);
     }
 
     if (event->key() == Qt::Key_1)

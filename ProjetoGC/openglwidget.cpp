@@ -19,8 +19,8 @@ OpenGLWidget::OpenGLWidget(QWidget * parent) : QOpenGLWidget(parent)
 
     targetPosYOffset = 2.0f;
     targetPosY = 0;
-    targetPosY1 = -2.0;
-    targetPosY2 = 2.0;
+    targetPosY1 = -10.0;
+    targetPosY2 = 10.0;
 
     acertoAlvo1 = false;
     acertoAlvo2 = false;
@@ -79,12 +79,12 @@ void OpenGLWidget::paintGL()
     }
 
     if(!acertoAlvo1){
-        alvo1->drawModel(targetPosY1, 10.0f, 0.0f, 0.3f,0.3f,0.3f);
+        alvo1->drawModel(targetPosY1, 12.0f, 0.0f, 0.4f,0.4f,0.4f);
         efeitosVisuais(alvo1);
     }
 
     if(!acertoAlvo2){
-        alvo2->drawModel(targetPosY2, 12.0f, 0.0f, 0.3f,0.3f,0.3f);
+        alvo2->drawModel(targetPosY2, 12.0f, 0.0f, 0.4f,0.4f,0.4f);
         efeitosVisuais(alvo2);
     }
 
@@ -215,23 +215,26 @@ void OpenGLWidget::animate()
     }
     qDebug("t1:%f t2:%f t3:%f X:%f Y:%f Z:%f",targetPosY1,targetPosY,targetPosY2,playerPosY,playerPosX,playerPosZ);
 
-    if((abs(abs(targetPosY1) -  playerPosY)<2.0f) and (abs(playerPosX)<3.0f) and (abs(playerPosX)>0.0f) and (abs(playerPosZ)<7.4f) and (abs(playerPosZ)>6.5f))
-     {
-           acertoAlvo1 = true;
-           qDebug("Hit alvo1!");
-     }
+    if ( (abs(playerPosX)>8.0f) and (abs(playerPosX)<12.0f) and (abs(playerPosZ)>5.0f) and (abs(playerPosZ)<7.0f) ){
+         qDebug("alinhado!");
+        if((abs(abs(targetPosY1) -  abs(playerPosY))<1.5f))
+         {
+               acertoAlvo1 = true;
+               qDebug("Hit alvo1!");
+         }
 
-    if((abs(abs(targetPosY2) -  playerPosY)<2.0f) and (abs(playerPosX)<5.0f) and (abs(playerPosX)>2.0f) and (abs(playerPosZ)<7.4f) and (abs(playerPosZ)>6.5f))
-     {
-           acertoAlvo2 = true;
-           qDebug("Hit alvo2!");
-     }
+        if((abs(abs(targetPosY2) -  abs(playerPosY))<1.5f))
+         {
+               acertoAlvo2 = true;
+               qDebug("Hit alvo2!");
+         }
 
-    if((abs(abs(targetPosY) -  playerPosY)<2.0f) and (abs(playerPosX)<5.0f) and (abs(playerPosX)>2.0f) and (abs(playerPosZ)<7.4f) and (abs(playerPosZ)>6.5f))
-     {
-           acertoAlvo3 = true;
-           qDebug("Hit! alvo3");
-     }
+        if((abs(abs(targetPosY) -  abs(playerPosY))<1.5f))
+         {
+               acertoAlvo3 = true;
+               qDebug("Hit! alvo3");
+         }
+    }
     update();
 
 }

@@ -14,120 +14,159 @@
    <string>3D Viewer</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <layout class="QVBoxLayout" name="verticalLayout">
-    <item>
-     <widget class="OpenGLWidget" name="openGLWidget">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="mouseTracking">
-       <bool>false</bool>
-      </property>
-      <property name="focusPolicy">
-       <enum>Qt::StrongFocus</enum>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QCheckBox" name="bkgndColorCheckBox">
-      <property name="text">
-       <string>Black background</string>
-      </property>
-      <property name="checked">
-       <bool>true</bool>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QWidget" name="shaderWidget" native="true">
-      <layout class="QHBoxLayout" name="horizontalLayout">
-       <property name="leftMargin">
-        <number>0</number>
+   <widget class="OpenGLWidget" name="openGLWidget">
+    <property name="geometry">
+     <rect>
+      <x>9</x>
+      <y>9</y>
+      <width>582</width>
+      <height>527</height>
+     </rect>
+    </property>
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
+    </property>
+    <property name="mouseTracking">
+     <bool>false</bool>
+    </property>
+    <property name="focusPolicy">
+     <enum>Qt::StrongFocus</enum>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="bkgndColorCheckBox">
+    <property name="geometry">
+     <rect>
+      <x>9</x>
+      <y>542</y>
+      <width>106</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Black background</string>
+    </property>
+    <property name="checked">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QWidget" name="shaderWidget" native="true">
+    <property name="geometry">
+     <rect>
+      <x>9</x>
+      <y>565</y>
+      <width>178</width>
+      <height>26</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <property name="leftMargin">
+      <number>0</number>
+     </property>
+     <property name="topMargin">
+      <number>6</number>
+     </property>
+     <property name="rightMargin">
+      <number>0</number>
+     </property>
+     <property name="bottomMargin">
+      <number>0</number>
+     </property>
+     <item>
+      <widget class="QLabel" name="shaderLabel">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
        </property>
-       <property name="topMargin">
-        <number>6</number>
+       <property name="text">
+        <string>Shader:</string>
        </property>
-       <property name="rightMargin">
-        <number>0</number>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="shaderComboBox">
+       <property name="enabled">
+        <bool>true</bool>
        </property>
-       <property name="bottomMargin">
+       <property name="currentIndex">
         <number>0</number>
        </property>
        <item>
-        <widget class="QLabel" name="shaderLabel">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="text">
-          <string>Shader:</string>
-         </property>
-        </widget>
+        <property name="text">
+         <string>0 - Depth as grayscale</string>
+        </property>
        </item>
        <item>
-        <widget class="QComboBox" name="shaderComboBox">
-         <property name="enabled">
-          <bool>true</bool>
-         </property>
-         <property name="currentIndex">
-          <number>0</number>
-         </property>
-         <item>
-          <property name="text">
-           <string>0 - Depth as grayscale</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>1 - Flat Shading</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>2 - Gouraud Shading</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>3 - Phong Shading</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>4 - Toon Shading</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>5 - Normal as colors</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>6 - Texture Mapping</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>7 - Multiple Textures</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>8 - Normal Mapping</string>
-          </property>
-         </item>
-        </widget>
+        <property name="text">
+         <string>1 - Flat Shading</string>
+        </property>
        </item>
-      </layout>
-     </widget>
-    </item>
-   </layout>
+       <item>
+        <property name="text">
+         <string>2 - Gouraud Shading</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>3 - Phong Shading</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>4 - Toon Shading</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>5 - Normal as colors</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>6 - Texture Mapping</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>7 - Multiple Textures</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>8 - Normal Mapping</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QLabel" name="fimJogo">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>10</y>
+      <width>581</width>
+      <height>521</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>25</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#0000ff;&quot;&gt;FIM DO JOGO. APERTE ESC.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
   </widget>
   <action name="actionE_xit">
    <property name="text">
@@ -145,9 +184,11 @@
    <extends>QOpenGLWidget</extends>
    <header>openglwidget.h</header>
    <slots>
+    <signal>fim(bool)</signal>
     <signal>statusBarMessage(QString)</signal>
     <signal>enableComboShaders(bool)</signal>
     <signal>updateHitsLabel(QString)</signal>
+    <slot>theEnd()</slot>
     <slot>showFileOpenDialog()</slot>
     <slot>changeShader(int)</slot>
     <slot>loadTexture()</slot>
@@ -220,6 +261,22 @@
     <hint type="destinationlabel">
      <x>299</x>
      <y>263</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>openGLWidget</sender>
+   <signal>fim(bool)</signal>
+   <receiver>fimJogo</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>299</x>
+     <y>272</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>300</x>
+     <y>270</y>
     </hint>
    </hints>
   </connection>

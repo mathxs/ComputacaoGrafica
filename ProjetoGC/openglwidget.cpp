@@ -22,6 +22,11 @@ OpenGLWidget::OpenGLWidget(QWidget * parent) : QOpenGLWidget(parent)
     targetPosY1 = -2.0;
     targetPosY2 = 2.0;
 
+    acertoAlvo1 = false;
+    acertoAlvo2 = false;
+    acertoAlvo3 = false;
+    emit fim(false);
+
 }
 
 void OpenGLWidget::changeShader(int shaderIndex)
@@ -37,7 +42,7 @@ void OpenGLWidget::changeShader(int shaderIndex)
 void OpenGLWidget::wheelEvent(QWheelEvent *event)
 {
 
-   pontoReferencia->zoom += 0.001 * event->delta();
+   //pontoReferencia->zoom += 0.001 * event->delta();
    atirador->zoom += 0.001 * event->delta();
    alvo1->zoom += 0.001 * event->delta();
    alvo2->zoom += 0.001 * event->delta();
@@ -64,17 +69,31 @@ void OpenGLWidget::paintGL()
     glViewport(0, 0, width(), height());
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    efeitosVisuais(atirador);
-    efeitosVisuais(alvo1);
-    efeitosVisuais(alvo2);
-    efeitosVisuais(alvo3);
-    efeitosVisuais(pontoReferencia);
-
     atirador->drawModel(playerPosY, playerPosX, playerPosZ, 0.5f,0.5f,0.5f);
-    alvo3->drawModel(targetPosY, 12.0f, 0.0f, 0.4f,0.4f,0.4f);
-    alvo1->drawModel(targetPosY1, 10.0f, 0.0f, 0.3f,0.3f,0.3f);
-    alvo2->drawModel(targetPosY2, 12.0f, 0.0f, 0.3f,0.3f,0.3f);
-    pontoReferencia->drawModel(10.0f, 10.0f, 0.0f, 100.0f,100.0f,1.0f);
+    efeitosVisuais(atirador);
+
+    if(!acertoAlvo3){
+        alvo3->drawModel(targetPosY, 12.0f, 0.0f, 0.4f,0.4f,0.4f);
+        efeitosVisuais(alvo3);
+    }
+
+    if(!acertoAlvo1){
+        efeitosVisuais(alvo1);
+        alvo1->drawModel(targetPosY1, 10.0f, 0.0f, 0.3f,0.3f,0.3f);
+    }
+
+    if(!acertoAlvo2){
+        alvo2->drawModel(targetPosY2, 12.0f, 0.0f, 0.3f,0.3f,0.3f);
+        efeitosVisuais(alvo2);
+    }
+
+    if(acertoAlvo1 and acertoAlvo2 and acertoAlvo3){
+        emit fim(true);
+    }
+
+    //efeitosVisuais(pontoReferencia);
+    //pontoReferencia->drawModel(-1.0f, 0.0f, 0.0f, 100.0f,100.0f,1.0f);
+
 
 }
 
@@ -112,7 +131,7 @@ void OpenGLWidget::resizeGL(int width, int height)
         alvo1->trackBall.resizeViewport(width, height);
         alvo2->trackBall.resizeViewport(width, height);
         alvo3->trackBall.resizeViewport(width, height);
-        pontoReferencia->trackBall.resizeViewport(width, height);
+        //pontoReferencia->trackBall.resizeViewport(width, height);
     update();
 }
 
@@ -147,7 +166,7 @@ void OpenGLWidget::showFileOpenDialog(){
     //pontoReferencia->readOFFFile(tempFileModel + "piso.off");
     pontoReferencia->readOFFFile("C:/Users/Matheus/Documents/ArqDesen/RespositorioGit/ComputacaoGrafica/ProjetoGC/3d/piso.off");
 
-    pontoReferencia->trackBall.resizeViewport(width(), height());
+    atirador->trackBall.resizeViewport(width(), height());
     update();
 }
 
@@ -187,11 +206,17 @@ void OpenGLWidget::animate()
     }
 
 
-    if((abs(targetPosY1 -  playerPosY)<1.0f || abs(targetPosY2 -  playerPosY)<1.0f || abs(targetPosY -  playerPosY)<1.0f) and (abs(10.0f -  playerPosX)<1.0f || abs(12.0f -  playerPosX)<1.0f || abs(12.0f -  playerPosX)<1.0f) and (abs(0.0f -  playerPosZ)<1.0f || abs(0.0f -  playerPosY)<1.0f || abs(0.0f -  playerPosZ)<1.0f))
+    if((abs(targetPosY1 -  playerPosY)<1.0f) and (abs(10.0f -  playerPosX)<1.0f) and (abs(0.0f -  playerPosZ)<1.0f))
      {
+            acertoAlvo1 = true;
            //numHits++;
            qDebug("Hit!");
      }
+    /*if((abs(targetPosY1 -  playerPosY)<1.0f || abs(targetPosY2 -  playerPosY)<1.0f || abs(targetPosY -  playerPosY)<1.0f) and (abs(10.0f -  playerPosX)<1.0f || abs(12.0f -  playerPosX)<1.0f || abs(12.0f -  playerPosX)<1.0f) and (abs(0.0f -  playerPosZ)<1.0f || abs(0.0f -  playerPosY)<1.0f || abs(0.0f -  playerPosZ)<1.0f))
+     {
+           //numHits++;
+           qDebug("Hit!");
+     }*/
 
     update();
 
@@ -252,6 +277,13 @@ void OpenGLWidget::keyPressEvent(QKeyEvent *event)
         playerPosXOffset = 0.0f;
         playerPosYOffset = 0.0f;
         playerPosZOffset = 0.0f;
+    }
+
+    if (event->key() == Qt::Key_Space)
+    {
+        acertoAlvo1 = true;
+        acertoAlvo2 = true;
+        acertoAlvo3 = true;
     }
 
     if (event->key() == Qt::Key_1)

@@ -17,6 +17,10 @@ class OpenGLWidget : public QOpenGLWidget, protected QOpenGLExtraFunctions
     QString tempFileModel;
     QTemporaryDir tempDir;
 
+    boolean acertoAlvo1;
+    boolean acertoAlvo2;
+    boolean acertoAlvo3;
+
     std::shared_ptr<Model> atirador;
     std::shared_ptr<Model> alvo1;
     std::shared_ptr<Model> alvo2;
@@ -50,6 +54,7 @@ public:
 signals:
     void statusBarMessage(QString);
     void enableComboShaders(bool);
+    void fim(bool);
 
 public slots:
     void showFileOpenDialog();

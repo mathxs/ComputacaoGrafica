@@ -5,8 +5,9 @@ OpenGLWidget::OpenGLWidget(QWidget * parent) : QOpenGLWidget(parent)
     tempFileModel = tempDir.path();
     if (tempDir.isValid()) {
       tempFileModel = tempDir.path();
-      QFile::copy(":3d/3d/star.off", tempFileModel + "star.off");
-      QFile::copy(":3d/3d/cubo.off", tempFileModel + "cubo.off");
+      QFile::copy(":/3d/3d/star.off", tempFileModel + "star.off");
+      QFile::copy(":/3d/3d/cubo.off", tempFileModel + "cubo.off");
+      QFile::copy(":/3d/3d/piso.off", tempFileModel + "piso.off");
     }
 
     playerPosYOffset = 0;
@@ -152,28 +153,32 @@ void OpenGLWidget::showFileOpenDialog(){
 
     atirador = std::make_shared<Model>(this);
     atirador->shaderIndex = shaderIndex;
-    //atirador->readOFFFile(tempFileModel + "star.off");
-    atirador->readOFFFile("C:/Users/Matheus/Documents/ArqDesen/RespositorioGit/ComputacaoGrafica/ProjetoGC/3d/star.off");
+    atirador->readOFFFile(tempFileModel + "star.off");
+    loadTex(":/3d/3d/vermelho.png", atirador);
+    //atirador->readOFFFile("C:/Users/Matheus/Documents/ArqDesen/RespositorioGit/ComputacaoGrafica/ProjetoGC/3d/star.off");
 
     alvo1 = std::make_shared<Model>(this);
     alvo1->shaderIndex = shaderIndex;
-    //alvo1->readOFFFile(tempFileModel + "cubo.off");
-    alvo1->readOFFFile("C:/Users/Matheus/Documents/ArqDesen/RespositorioGit/ComputacaoGrafica/ProjetoGC/3d/cubo.off");
+    alvo1->readOFFFile(tempFileModel + "cubo.off");
+    loadTex(":/3d/3d/amarelo.png", alvo1);
+    //alvo1->readOFFFile("C:/Users/Matheus/Documents/ArqDesen/RespositorioGit/ComputacaoGrafica/ProjetoGC/3d/cubo.off");
 
     alvo2 = std::make_shared<Model>(this);
     alvo2->shaderIndex = shaderIndex;
-    //alvo2->readOFFFile(tempFileModel + "cubo.off");
-    alvo2->readOFFFile("C:/Users/Matheus/Documents/ArqDesen/RespositorioGit/ComputacaoGrafica/ProjetoGC/3d/cubo.off");
+    alvo2->readOFFFile(tempFileModel + "cubo.off");
+    loadTex(":/3d/3d/cinza.png", alvo2);
+    //alvo2->readOFFFile("C:/Users/Matheus/Documents/ArqDesen/RespositorioGit/ComputacaoGrafica/ProjetoGC/3d/cubo.off");
 
     alvo3 = std::make_shared<Model>(this);
     alvo3->shaderIndex = shaderIndex;
-    //alvo3->readOFFFile(tempFileModel + "cubo.off");
-    alvo3->readOFFFile("C:/Users/Matheus/Documents/ArqDesen/RespositorioGit/ComputacaoGrafica/ProjetoGC/3d/cubo.off");
+    alvo3->readOFFFile(tempFileModel + "cubo.off");
+    loadTex(":/3d/3d/roxo.png", alvo3);
+    //alvo3->readOFFFile("C:/Users/Matheus/Documents/ArqDesen/RespositorioGit/ComputacaoGrafica/ProjetoGC/3d/cubo.off");
 
     pontoReferencia = std::make_shared<Model>(this);
     pontoReferencia->shaderIndex = shaderIndex;
-    //pontoReferencia->readOFFFile(tempFileModel + "piso.off");
-    pontoReferencia->readOFFFile("C:/Users/Matheus/Documents/ArqDesen/RespositorioGit/ComputacaoGrafica/ProjetoGC/3d/piso.off");
+    pontoReferencia->readOFFFile(tempFileModel + "piso.off");
+    //pontoReferencia->readOFFFile("C:/Users/Matheus/Documents/ArqDesen/RespositorioGit/ComputacaoGrafica/ProjetoGC/3d/piso.off");
 
     atirador->trackBall.resizeViewport(width(), height());
     update();
@@ -321,6 +326,16 @@ void OpenGLWidget::keyPressEvent(QKeyEvent *event)
     {
         QApplication::quit();
     }
+}
+
+void OpenGLWidget::loadTex(QString const &fileName, std::shared_ptr<Model> &m){
+
+    QImage image1;
+    image1.load(fileName);
+    image1 = image1.convertToFormat(QImage::Format_RGBA8888);
+    m->loadTexture(image1);
+
+    update ();
 }
 
 void OpenGLWidget::toggleBackgroundColor(bool changeBColor)

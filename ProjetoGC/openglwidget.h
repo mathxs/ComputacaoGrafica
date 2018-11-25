@@ -69,6 +69,7 @@ protected:
     void resizeGL(int width, int height);
     void paintGL();
     void efeitosVisuais(std::shared_ptr<Model> &m);
+    void loadTex(QString const &fileName, std::shared_ptr<Model> &m);
 
     Light light;
     Camera camera;

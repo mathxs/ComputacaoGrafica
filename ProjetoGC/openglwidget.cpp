@@ -10,38 +10,35 @@ OpenGLWidget::OpenGLWidget(QWidget * parent) : QOpenGLWidget(parent)
     }
 
     playerPosYOffset = 0;
-    playerPosY = 0;
+    playerPosXOffset = 0;
+    playerPosZOffset = 0;
+
+    playerPosY = 0.0f;
+    playerPosX = 0.0f;
+    playerPosZ = 0.0f;
 
     targetPosYOffset = 2.0f;
     targetPosY = 0;
-    targetPosY1 = -0.2;
-    targetPosY2 = +0.2;
+    targetPosY1 = -2.0;
+    targetPosY2 = 2.0;
 
-    shooting = false;
-    projectilePosX = 0;
-    projectilePosY = 0;
-
-    numHits = 0;
 }
 
 void OpenGLWidget::changeShader(int shaderIndex)
 {
-    if (tiro)
         atirador->shaderIndex = shaderIndex;
-        tiro->shaderIndex = shaderIndex;
         alvo1->shaderIndex = shaderIndex;
         alvo2->shaderIndex = shaderIndex;
         alvo3->shaderIndex = shaderIndex;
+        pontoReferencia->shaderIndex = shaderIndex;
     update();
 }
 
 void OpenGLWidget::wheelEvent(QWheelEvent *event)
 {
-   if(!atirador)
-       return;
 
+   pontoReferencia->zoom += 0.001 * event->delta();
    atirador->zoom += 0.001 * event->delta();
-   tiro->zoom += 0.001 * event->delta();
    alvo1->zoom += 0.001 * event->delta();
    alvo2->zoom += 0.001 * event->delta();
    alvo3->zoom += 0.001 * event->delta();
@@ -68,21 +65,16 @@ void OpenGLWidget::paintGL()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     efeitosVisuais(atirador);
-    efeitosVisuais(tiro);
     efeitosVisuais(alvo1);
     efeitosVisuais(alvo2);
     efeitosVisuais(alvo3);
+    efeitosVisuais(pontoReferencia);
 
-    atirador->drawModel(playerPosY, 0.0f, 0.0f, 0.5f,0.5f,0.5f);
-    alvo3->drawModel(targetPosY, 1.0f, 0.0f, 0.4f,0.4f,0.4f);
-    alvo1->drawModel(targetPosY1, 0.0f, 0.0f, 0.3f,0.3f,0.3f);
-    alvo2->drawModel(targetPosY2, -1.0f, 0.0f, 0.3f,0.3f,0.3f);
-    if (shooting)
-    {
-        tiro->drawModel(projectilePosY, projectilePosY, 0.0f, 0.1f,0.1f,0.1f);
-    }
-
-
+    atirador->drawModel(playerPosY, playerPosX, playerPosZ, 0.5f,0.5f,0.5f);
+    alvo3->drawModel(targetPosY, 12.0f, 0.0f, 0.4f,0.4f,0.4f);
+    alvo1->drawModel(targetPosY1, 10.0f, 0.0f, 0.3f,0.3f,0.3f);
+    alvo2->drawModel(targetPosY2, 12.0f, 0.0f, 0.3f,0.3f,0.3f);
+    pontoReferencia->drawModel(0.0f, 0.0f, 0.0f, 0.5f,0.5f,0.5f);
 
 }
 
@@ -116,12 +108,11 @@ void OpenGLWidget::resizeGL(int width, int height)
 {
     camera.resizeViewport(width, height);
 
-    if (tiro)
         atirador->trackBall.resizeViewport(width, height);
-        tiro->trackBall.resizeViewport(width, height);
         alvo1->trackBall.resizeViewport(width, height);
         alvo2->trackBall.resizeViewport(width, height);
         alvo3->trackBall.resizeViewport(width, height);
+        pontoReferencia->trackBall.resizeViewport(width, height);
     update();
 }
 
@@ -135,11 +126,6 @@ void OpenGLWidget::showFileOpenDialog(){
     atirador->shaderIndex = shaderIndex;
     //atirador->readOFFFile(tempFileModel + "star.off");
     atirador->readOFFFile("C:/Users/Matheus/Documents/ArqDesen/RespositorioGit/ComputacaoGrafica/ProjetoGC/3d/star.off");
-
-    tiro = std::make_shared<Model>(this);
-    tiro->shaderIndex = shaderIndex;
-    //tiro->readOFFFile(tempFileModel + "star.off");
-    tiro->readOFFFile("C:/Users/Matheus/Documents/ArqDesen/RespositorioGit/ComputacaoGrafica/ProjetoGC/3d/star.off");
 
     alvo1 = std::make_shared<Model>(this);
     alvo1->shaderIndex = shaderIndex;
@@ -156,7 +142,12 @@ void OpenGLWidget::showFileOpenDialog(){
     //alvo3->readOFFFile(tempFileModel + "cubo.off");
     alvo3->readOFFFile("C:/Users/Matheus/Documents/ArqDesen/RespositorioGit/ComputacaoGrafica/ProjetoGC/3d/cubo.off");
 
-    atirador->trackBall.resizeViewport(width(), height());
+    pontoReferencia = std::make_shared<Model>(this);
+    pontoReferencia->shaderIndex = shaderIndex;
+    //pontoReferencia->readOFFFile(tempFileModel + "piso.off");
+    pontoReferencia->readOFFFile("C:/Users/Matheus/Documents/ArqDesen/RespositorioGit/ComputacaoGrafica/ProjetoGC/3d/piso.off");
+
+    pontoReferencia->trackBall.resizeViewport(width(), height());
     update();
 }
 
@@ -166,72 +157,42 @@ void OpenGLWidget::animate()
 
     // Change player Y position
     playerPosY += playerPosYOffset * elapsedTime;
-
-    // Check player bounds
-    if (playerPosY < -0.8f)
-        playerPosY = -0.8f;
-    if (playerPosY > 0.8f)
-        playerPosY = 0.8f;
+    playerPosX += playerPosXOffset * elapsedTime;
+    playerPosZ += playerPosZOffset * elapsedTime;
 
     // Update target
-    targetPosY += targetPosYOffset * elapsedTime;
-    targetPosY1 += targetPosYOffset * elapsedTime;
-    targetPosY2 += targetPosYOffset * elapsedTime;
+    targetPosY += targetPosYOffset * 5 * elapsedTime;
+    targetPosY1 += targetPosYOffset * 5 * elapsedTime;
+    targetPosY2 += targetPosYOffset * 5 * elapsedTime;
 
     if (targetPosYOffset > 0)
     {
-        if (targetPosY > 0.8f)
+        if (targetPosY > 20.0f)
         {
-            targetPosY = 0.8f;
-            targetPosY1 = 0.6f;
-            targetPosY2 = 1.0f;
+            targetPosY = 20.0f;
+            targetPosY1 = 15.0f;
+            targetPosY2 = 25.0f;
             targetPosYOffset = -targetPosYOffset;
         }
     }
     else if (targetPosYOffset < 0)
     {
-        if (targetPosY < -0.8f)
+        if (targetPosY < -20.0f)
         {
-            targetPosY = -0.8f;
-            targetPosY1 = -1.0f;
-            targetPosY2 = -0.6f;
+            targetPosY = -20.0f;
+            targetPosY1 = -15.0f;
+            targetPosY2 = -25.0f;
             targetPosYOffset = -targetPosYOffset;
         }
     }
 
-    // Update projectile
-    if (shooting)
-    {
-        // Move projectile
-        projectilePosX += 3.0f * elapsedTime;
 
-        // Check whether the projectile hit the target
-        if(projectilePosX > 0.9f)
-            {
-                if (std::fabs(projectilePosY - targetPosY1) < 0.125f || std::fabs(projectilePosY - targetPosY2) < 0.125f)
-                {
-                    numHits++;
-                    qDebug("Hit!");
-                    shooting = false;
-                }
+    if((abs(targetPosY1 -  playerPosY)<1.0f || abs(targetPosY2 -  playerPosY)<1.0f || abs(targetPosY -  playerPosY)<1.0f) and (abs(10.0f -  playerPosX)<1.0f || abs(12.0f -  playerPosX)<1.0f || abs(12.0f -  playerPosX)<1.0f) and (abs(0.0f -  playerPosZ)<1.0f || abs(0.0f -  playerPosY)<1.0f || abs(0.0f -  playerPosZ)<1.0f))
+     {
+           //numHits++;
+           qDebug("Hit!");
+     }
 
-            }
-        else if (projectilePosX > 0.5f)
-        {
-            if (std::fabs(projectilePosY - targetPosY) < 0.125f)
-            {
-                numHits = numHits -1;
-                qDebug("Hit!");
-                shooting = false;
-            }
-        }
-    }
-    // Check whether the projectile missed the target
-    if (projectilePosX > 1.0f)
-    {
-        qDebug("Missed");
-        shooting = false;
-    }
     update();
 
 }
@@ -242,36 +203,30 @@ void OpenGLWidget::mouseMoveEvent(QMouseEvent *event)
         return;
 
     atirador->trackBall.mouseMove(event->localPos());
-    tiro->trackBall.mouseMove(event->localPos());
     alvo1->trackBall.mouseMove(event->localPos());
     alvo2->trackBall.mouseMove(event->localPos());
     alvo3->trackBall.mouseMove(event->localPos());
+    pontoReferencia->trackBall.mouseMove(event->localPos());
 }
 
 void OpenGLWidget::mousePressEvent(QMouseEvent *event)
 {
-    if (!atirador)
-        return;
-
     if (event->button() & Qt::LeftButton)
         atirador->trackBall.mousePress(event->localPos());
-        tiro->trackBall.mousePress(event->localPos());
         alvo1->trackBall.mousePress(event->localPos());
         alvo2->trackBall.mousePress(event->localPos());
         alvo3->trackBall.mousePress(event->localPos());
+        pontoReferencia->trackBall.mousePress(event->localPos());
 }
 
 void OpenGLWidget::mouseReleaseEvent(QMouseEvent *event)
 {
-    if (!atirador)
-        return;
-
     if (event->button() & Qt::LeftButton)
         atirador->trackBall.mouseRelease(event->localPos());
-        tiro->trackBall.mouseRelease(event->localPos());
         alvo1->trackBall.mouseRelease(event->localPos());
         alvo2->trackBall.mouseRelease(event->localPos());
         alvo3->trackBall.mouseRelease(event->localPos());
+        pontoReferencia->trackBall.mousePress(event->localPos());
 }
 
 void OpenGLWidget::keyPressEvent(QKeyEvent *event)
@@ -284,16 +239,30 @@ void OpenGLWidget::keyPressEvent(QKeyEvent *event)
         event->key() == Qt::Key_A)
         playerPosYOffset = -2.0f;
 
-    if (event->key() == Qt::Key_Space)
+    if (event->key() == Qt::Key_Up ||
+        event->key() == Qt::Key_W)
+        playerPosXOffset = 2.0f;
+
+    if (event->key() == Qt::Key_Down ||
+        event->key() == Qt::Key_S)
+        playerPosXOffset = -2.0f;
+
+    if (event->key() == Qt::Key_0)
     {
-        if (!shooting)
-        {
-            shooting = true;
-            projectilePosX = -0.7f;
-            projectilePosY = playerPosY;
-        }
+        playerPosXOffset = 0.0f;
+        playerPosYOffset = 0.0f;
+        playerPosZOffset = 0.0f;
     }
 
+    if (event->key() == Qt::Key_1)
+    {
+        playerPosZOffset = 2.0f;
+    }
+
+    if (event->key() == Qt::Key_2)
+    {
+        playerPosZOffset = -2.0f;
+    }
     if (event->key() == Qt::Key_Escape)
     {
         QApplication::quit();

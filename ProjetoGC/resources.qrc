@@ -24,5 +24,6 @@
     <qresource prefix="/3d">
         <file>3d/cubo.off</file>
         <file>3d/star.off</file>
+        <file>3d/piso.off</file>
     </qresource>
 </RCC>

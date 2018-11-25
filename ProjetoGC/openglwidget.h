@@ -18,22 +18,22 @@ class OpenGLWidget : public QOpenGLWidget, protected QOpenGLExtraFunctions
     QTemporaryDir tempDir;
 
     std::shared_ptr<Model> atirador;
-    std::shared_ptr<Model> tiro;
     std::shared_ptr<Model> alvo1;
     std::shared_ptr<Model> alvo2;
     std::shared_ptr<Model> alvo3;
+    std::shared_ptr<Model> pontoReferencia;
 
-    float playerPosYOffset; // Player displacement along Y axis
+    float playerPosYOffset;
+    float playerPosXOffset;
+    float playerPosZOffset;// Player displacement along Y axis
     float playerPosY; // Current player Y position
+    float playerPosX;
+    float playerPosZ;
 
     float targetPosYOffset; // Target displacement along Y axis
     float targetPosY; // Current target Y position
     float targetPosY1;
     float targetPosY2;
-    bool shooting; // Whether the projectile is being animated
-    float projectilePosX; // Projectile X position
-    float projectilePosY; // Projectile Y position
-    int numHits; // Number of hits
 
 public:
     OpenGLWidget(QWidget *parent = nullptr);

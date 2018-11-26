@@ -8,6 +8,9 @@ OpenGLWidget::OpenGLWidget(QWidget * parent) : QOpenGLWidget(parent)
       QFile::copy(":/3d/3d/star.off", tempFileModel + "star.off");
       QFile::copy(":/3d/3d/cubo.off", tempFileModel + "cubo.off");
       QFile::copy(":/3d/3d/piso.off", tempFileModel + "piso.off");
+      QFile::copy(":/3d/3d/mushroom.off", tempFileModel + "mushroom.off");
+      QFile::copy(":/3d/3d/sphere.off", tempFileModel + "sphere.off");
+
     }
 
     playerPosYOffset = 0;
@@ -159,13 +162,13 @@ void OpenGLWidget::showFileOpenDialog(){
 
     alvo1 = std::make_shared<Model>(this);
     alvo1->shaderIndex = shaderIndex;
-    alvo1->readOFFFile(tempFileModel + "cubo.off");
+    alvo1->readOFFFile(tempFileModel + "sphere.off");
     loadTex(":/3d/3d/amarelo.png", alvo1);
     //alvo1->readOFFFile("C:/Users/Matheus/Documents/ArqDesen/RespositorioGit/ComputacaoGrafica/ProjetoGC/3d/cubo.off");
 
     alvo2 = std::make_shared<Model>(this);
     alvo2->shaderIndex = shaderIndex;
-    alvo2->readOFFFile(tempFileModel + "cubo.off");
+    alvo2->readOFFFile(tempFileModel + "mushroom.off");
     loadTex(":/3d/3d/cinza.png", alvo2);
     //alvo2->readOFFFile("C:/Users/Matheus/Documents/ArqDesen/RespositorioGit/ComputacaoGrafica/ProjetoGC/3d/cubo.off");
 
@@ -221,25 +224,32 @@ void OpenGLWidget::animate()
     qDebug("t1:%f t2:%f t3:%f X:%f Y:%f Z:%f",targetPosY1,targetPosY,targetPosY2,playerPosY,playerPosX,playerPosZ);
 
     if ( (abs(playerPosX)>8.0f) and (abs(playerPosX)<12.0f) and (abs(playerPosZ)>5.0f) and (abs(playerPosZ)<7.0f) ){
-         qDebug("alinhado!");
-        if((abs(abs(targetPosY1) -  abs(playerPosY))<1.5f))
+         qDebug("alinhado cubo!");
+
+        if((abs(abs(targetPosY2) -  abs(playerPosY))<1.5f))
+         {
+               acertoAlvo3 = true;
+               qDebug("Hit alvo2!");
+         }
+    }
+
+    if ( (abs(playerPosX)>8.0f) and (abs(playerPosX)<12.0f) and (abs(playerPosZ)>-1.0f) and (abs(playerPosZ)<1.0f) ){
+        qDebug("alinhado cogumelo!");
+        if(((targetPosY -  playerPosY)<19.0f) and ((targetPosY -  playerPosY)>17.0f))
+         {
+               acertoAlvo2 = true;
+               qDebug("Hit! alvo3");
+         }
+    }
+    if ( (abs(playerPosX)>8.0f) and (abs(playerPosX)<12.0f) and (abs(playerPosZ)>-1.0f) and (abs(playerPosZ)<1.0f) ){
+        qDebug("alinhado esfera!");
+        if(((targetPosY1 -  playerPosY)>-2.0f) and ((targetPosY1 -  playerPosY)<2.0f))
          {
                acertoAlvo1 = true;
                qDebug("Hit alvo1!");
          }
-
-        if((abs(abs(targetPosY2) -  abs(playerPosY))<1.5f))
-         {
-               acertoAlvo2 = true;
-               qDebug("Hit alvo2!");
-         }
-
-        if((abs(abs(targetPosY) -  abs(playerPosY))<1.5f))
-         {
-               acertoAlvo3 = true;
-               qDebug("Hit! alvo3");
-         }
     }
+
     update();
 
 }

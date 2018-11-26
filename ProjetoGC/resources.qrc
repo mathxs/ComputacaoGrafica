@@ -29,5 +29,7 @@
         <file>3d/cinza.png</file>
         <file>3d/roxo.png</file>
         <file>3d/vermelho.png</file>
+        <file>3d/mushroom.off</file>
+        <file>3d/sphere.off</file>
     </qresource>
 </RCC>
